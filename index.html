@@ -226,7 +226,7 @@
     <nav class="nav">
       <button class="nav-btn active" onclick="showPage('browse', this)">Browse</button>
       <button class="nav-btn" onclick="showPage('submit', this)">Submit / Ask</button>
-      <button class="nav-btn" onclick="showPage('guide', this)">How to add</button>
+      <a href="how-to-add.html" class="nav-btn" target="_blank">How to add</a>
     </nav>
   </div>
 </header>
@@ -296,176 +296,12 @@
     </div>
   </div>
 
-  <!-- ══ GUIDE PAGE ══ -->
-  <div class="page" id="page-guide">
-    <div class="guide-wrap">
-      <h2>How to add new compounds</h2>
-      <p>You don't need to understand code to add entries. Just find the data section near the bottom of this file, copy a template, fill in your values, and save. That's it.</p>
-
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <h3>Open index.html in a text editor</h3>
-          <p>On Mac: use TextEdit (switch to plain text mode first via Format → Make Plain Text). On Windows: use Notepad. Or use VS Code if you have it — it's free and highlights the code nicely.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <h3>Find the molecule data section</h3>
-          <p>Search for the text <code>const molecules = [</code> — that's where all compounds live. Each entry starts with <code>{id:</code> and ends with <code>},</code></p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <h3>Copy the right template and fill it in</h3>
-          <p>Use the chromophore template for fluorophores/photosensitizers, the radical template for EPR-active species, the dyad template for two-component systems, or the triad template for three-component systems.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <h3>Paste before the closing bracket and save</h3>
-          <p>Add your new entry right before the <code>];</code> line that closes the array. Make sure the previous entry ends with a comma. Save the file and re-upload it to GitHub.</p>
-        </div>
-      </div>
-
-      <div class="template-label">Chromophore template</div>
-      <div class="code-block">{
-  id: 10,                              // next integer — don't repeat any id
-  name: "Full IUPAC or common name",
-  abbr: "SHORT",                       // abbreviation shown on the card
-  type: "chromophore",                 // "chromophore" | "radical" | "dyad" | "triad"
-  cls:  "porphyrin",                   // perylene | porphyrin | BODIPY | nitroxide | carbon-centered
-  img:  "images/SHORT.png",           // optional — leave out if no image yet
-  props: {
-    "λ_abs":   "530 nm",
-    "λ_em":    "545 nm",
-    "ε":       "75,000 M⁻¹cm⁻¹",
-    "Φ_f":     "0.85",
-    "τ_S":     "4.2 ns",
-    "Solvent": "toluene"
-  },
-  desc: "2–3 sentences on photophysics and notable uses.",
-  refs: [
-    { text: "Author et al., Journal Year, Vol, Page", url: "https://doi.org/..." }
-  ]
-},</div>
-
-      <div class="template-label">Radical template</div>
-      <div class="code-block">{
-  id: 11,
-  name: "Full name",
-  abbr: "RAD",
-  type: "radical",
-  cls:  "nitroxide",
-  img:  "images/RAD.png",             // optional
-  props: {
-    "g-factor":   "2.0059",
-    "a_N":        "45.2 MHz",
-    "Spin state": "S=1/2",
-    "t₁/₂":      "weeks (solid)",
-    "EPR lines":  "3"
-  },
-  desc: "EPR characteristics and applications.",
-  refs: [
-    { text: "Author et al., Journal Year", url: "https://doi.org/..." }
-  ]
-},</div>
-
-      <div class="template-label">Dyad template</div>
-      <div class="code-block">{
-  id: 12,
-  name: "Chromophore–radical dyad full name",
-  abbr: "DYD",
-  type: "dyad",
-  cls:  "perylene",
-  img:  "images/DYD.png",             // optional
-  props: {
-    "λ_abs":       "527 nm",
-    "RP lifetime": "~150 ns",
-    "J_ex":        "< 1 MHz",
-    "Spin state":  "doublet/triplet RP",
-    "Method":      "TR-EPR"
-  },
-  desc: "Description of spin polarization mechanism and QIS relevance.",
-  refs: [
-    { text: "Author et al., Journal Year", url: "https://doi.org/..." }
-  ]
-},</div>
-
-      <div class="template-label">Triad template</div>
-      <div class="code-block">{
-  id: 13,
-  name: "Donor–bridge–acceptor triad full name",
-  abbr: "TRIAD",
-  type: "triad",
-  cls:  "porphyrin",
-  img:  "images/TRIAD.png",           // optional
-  props: {
-    "λ_abs":       "550 nm",
-    "CS lifetime": "~1 μs",
-    "J_ex":        "< 1 MHz",
-    "Spin state":  "quartet/doublet",
-    "Method":      "TR-EPR"
-  },
-  desc: "Description of charge-separated state, spin polarization, and application.",
-  refs: [
-    { text: "Author et al., Journal Year", url: "https://doi.org/..." }
-  ]
-},</div>
-
-      <h2 style="margin-top:2rem;margin-bottom:6px;">How to add chemical structure images</h2>
-      <p style="font-size:14px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6;">Structure images appear on the card and in the detail panel automatically when you add an <code>img</code> field. If omitted, the card shows a "structure pending" placeholder instead.</p>
-
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <h3>Export the structure from ChemDraw</h3>
-          <p>Draw your molecule in ChemDraw → File → Save As → choose <b>PNG</b> or <b>SVG</b> format. Name the file using the abbreviation, e.g. <code>PDI.png</code>, <code>TEMPO.png</code>. PNG is fine; SVG looks sharper at all screen sizes. Recommended size: at least 400×300 px. White or transparent background both work.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <h3>Alternative: download from PubChem</h3>
-          <p>Go to <a href="https://pubchem.ncbi.nlm.nih.gov" target="_blank">pubchem.ncbi.nlm.nih.gov</a> → search your compound → click the structure image → right-click → "Save image as." Free, instant, no drawing needed for common compounds.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <h3>Create an "images" folder in GitHub</h3>
-          <p>Go to your GitHub repository → click <b>Add file → Create new file</b> → in the name box type <code>images/placeholder.txt</code> → click Commit. This creates the folder. Then click <b>Add file → Upload files</b>, open the <code>images</code> folder, and drag your PNG files in → Commit.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <h3>Add the img field to the molecule entry</h3>
-          <p>In <code>index.html</code>, find the molecule entry and add one line after the <code>abbr</code> field:</p>
-        </div>
-      </div>
-      <div class="code-block">img: "images/PDI.png",   // filename must match exactly, including uppercase/lowercase</div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-body">
-          <h3>Save and re-upload index.html to GitHub</h3>
-          <p>The card will now show the structure image instead of the placeholder. The detail panel also shows a larger version of the image when you click the card.</p>
-        </div>
-      </div>
-
-      <div class="info-box" style="margin-top:1rem;">
-        <b>Tips:</b> Keep image file sizes under 200 KB for fast loading. If the image has a white background and your site is in dark mode, add a little padding — the <code>mol-img</code> CSS already handles this. SVG files from ChemDraw scale perfectly at any size and are the best choice for clean rendering.
-      </div>
-    </div>
-  </div>
 
 </main>
 
 <footer class="site-footer">
-  Molecular Photophysics and Radical Spins · Qiu Lab · Utah State University ·
+  Molecular Photophysics and Radical Spins ·
+  <a href="https://www.qiu-chem.com" target="_blank">Qiu Lab · Utah State University</a> ·
   <a href="mailto:yunfan.qiu@usu.edu">yunfan.qiu@usu.edu</a>
 </footer>
 
@@ -489,7 +325,6 @@ const molecules = [
     id: 2,
     name: "Zinc tetraphenylporphyrin",
     abbr: "ZnTPP",
-    img: "images/ZnTPP.png",
     type: "chromophore",
     cls: "porphyrin",
     props: { "λ_abs": "550 nm (Q)", "λ_em": "600 nm", "ε": "25,000 M⁻¹cm⁻¹", "τ_S": "1.8 ns", "T₁": "~50 μs" },
