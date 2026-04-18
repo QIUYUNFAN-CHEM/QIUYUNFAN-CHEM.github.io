@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LL05QGCWJF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-LL05QGCWJF');</script>
+<title>Molecular Photophysics and Radical Spins — Qiu Lab</title>
+<style>
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff;
+    --bg2: #f6f5f2;
+    --bg3: #edece8;
+    --text: #1a1a18;
+    --text2: #5f5e5a;
+    --text3: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --blue-bg: #E6F1FB; --blue-text: #185FA5; --blue-border: #85B7EB;
+    --green-bg: #E1F5EE; --green-text: #0F6E56; --green-border: #5DCAA5;
+    --amber-bg: #FAEEDA; --amber-text: #854F0B; --amber-border: #EF9F27;
+    --purple-bg: #EEEDFE; --purple-text: #533AB7; --purple-border: #AFA9EC;
+    --radius: 8px; --radius-lg: 12px;
+    --font: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    --mono: 'SFMono-Regular', Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a; --bg2: #252523; --bg3: #2e2e2b;
+      --text: #e8e7e2; --text2: #a8a79f; --text3: #666660;
+      --border: rgba(255,255,255,0.10); --border2: rgba(255,255,255,0.20);
+      --blue-bg: #0c2a44; --blue-text: #85B7EB;
+      --green-bg: #04261c; --green-text: #5DCAA5;
+      --amber-bg: #2a1a04; --amber-text: #FAC775;
+      --purple-bg: #1e1a44; --purple-text: #AFA9EC;
+    }
+  }
+  html { font-family: var(--font); background: var(--bg3); color: var(--text); }
+  body { min-height: 100vh; }
+  a { color: var(--blue-text); }
+
+  /* ── Layout ── */
+  .site-header {
+    background: var(--bg);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 2rem;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px; gap: 1rem;
+  }
+  .site-title { font-size: 15px; font-weight: 500; color: var(--text); text-decoration: none; }
+  .site-subtitle { font-size: 12px; color: var(--text2); margin-top: 1px; }
+  .nav { display: flex; gap: 2px; background: var(--bg2); border-radius: var(--radius); padding: 3px; }
+  .nav-btn {
+    font-size: 13px; padding: 5px 14px; border-radius: 6px; border: none;
+    background: transparent; color: var(--text2); cursor: pointer;
+    font-family: var(--font); transition: all 0.15s;
+  }
+  .nav-btn.active {
+    background: var(--bg); color: var(--text); font-weight: 500;
+    border: 0.5px solid var(--border);
+  }
+  .main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── Browse controls ── */
+  .controls { display: flex; gap: 8px; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  .search-input {
+    flex: 1; min-width: 200px; font-size: 14px; padding: 8px 12px;
+    border: 0.5px solid var(--border2); border-radius: var(--radius);
+    background: var(--bg); color: var(--text); font-family: var(--font);
+  }
+  .search-input:focus { outline: none; border-color: var(--blue-border); }
+  .type-bar { display: flex; gap: 3px; background: var(--bg2); border-radius: var(--radius); padding: 3px; }
+  .tab {
+    font-size: 13px; padding: 5px 12px; border-radius: 6px; border: none;
+    background: transparent; color: var(--text2); cursor: pointer;
+    font-family: var(--font); transition: all 0.15s;
+  }
+  .tab.active {
+    background: var(--bg); color: var(--text); font-weight: 500;
+    border: 0.5px solid var(--border);
+  }
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.75rem; align-items: center; }
+  .filter-label { font-size: 13px; color: var(--text2); }
+  .chip {
+    font-size: 12px; padding: 4px 10px; border-radius: 20px;
+    border: 0.5px solid var(--border2); background: var(--bg); color: var(--text2);
+    cursor: pointer; font-family: var(--font); transition: all 0.15s;
+  }
+  .chip.active { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-border); }
+  .count-info { font-size: 13px; color: var(--text2); margin-bottom: 0.75rem; }
+
+  /* ── Card grid ── */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+  .card {
+    background: var(--bg); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1rem 1.25rem;
+    cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .card:hover { border-color: var(--border2); }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .card-abbr { font-size: 16px; font-weight: 500; color: var(--text); }
+  .card-name { font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.4; }
+  .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+  .badge-c { background: var(--blue-bg); color: var(--blue-text); }
+  .badge-r { background: var(--green-bg); color: var(--green-text); }
+  .badge-b { background: var(--amber-bg); color: var(--amber-text); }
+  .badge-t { background: var(--purple-bg); color: var(--purple-text); }
+  .mol-box {
+    width: 100%; height: 72px; margin: 8px 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg2); border-radius: 6px;
+    font-size: 11px; color: var(--text3); font-style: italic;
+  }
+  .props { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-top: 6px; }
+  .prop { font-size: 12px; color: var(--text2); }
+  .prop b { color: var(--text); font-weight: 500; }
+  .card-divider { border: none; border-top: 0.5px solid var(--border); margin: 8px 0; }
+  .ref-small { font-size: 11px; color: var(--text3); }
+
+  /* ── Detail panel ── */
+  .detail {
+    display: none; margin-top: 1rem;
+    background: var(--bg); border: 0.5px solid var(--border2);
+    border-radius: var(--radius-lg); padding: 1.5rem;
+  }
+  .detail.open { display: block; }
+  .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+  .detail-name { font-size: 22px; font-weight: 500; color: var(--text); }
+  .detail-full { font-size: 13px; color: var(--text2); margin-top: 3px; }
+  .close-btn { background: none; border: none; color: var(--text2); cursor: pointer; font-size: 20px; line-height: 1; padding: 4px; }
+  .detail-props { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1rem; }
+  .detail-prop { background: var(--bg2); border-radius: var(--radius); padding: 10px 12px; }
+  .detail-prop-key { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+  .detail-prop-val { font-size: 17px; font-weight: 500; color: var(--text); }
+  .detail-desc { font-size: 14px; color: var(--text2); line-height: 1.65; margin-bottom: 1rem; }
+  .refs-head { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  .ref-item { font-size: 13px; color: var(--text2); margin-bottom: 4px; }
+
+  /* ── Submit form ── */
+  .form-wrap { max-width: 560px; }
+  .form-wrap h2 { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
+  .form-wrap > p { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.6; }
+  .info-box {
+    background: var(--bg2); border-radius: var(--radius); padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem; font-size: 13px; color: var(--text2); line-height: 1.7;
+    border-left: 3px solid var(--blue-border);
+  }
+  .info-box b { color: var(--text); }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 5px; }
+  .field input, .field textarea, .field select {
+    width: 100%; font-size: 14px; padding: 9px 12px;
+    border: 0.5px solid var(--border2); border-radius: var(--radius);
+    background: var(--bg); color: var(--text); font-family: var(--font);
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    outline: none; border-color: var(--blue-border);
+  }
+  .field textarea { resize: vertical; min-height: 90px; }
+  .submit-btn {
+    font-size: 14px; padding: 9px 22px; border: 0.5px solid var(--border2);
+    border-radius: var(--radius); background: var(--bg); color: var(--text);
+    cursor: pointer; font-family: var(--font); font-weight: 500; transition: background 0.15s;
+  }
+  .submit-btn:hover { background: var(--bg2); }
+  .success-msg {
+    display: none; margin-top: 1rem; font-size: 14px; color: var(--green-text);
+    background: var(--green-bg); border: 0.5px solid var(--green-border);
+    border-radius: var(--radius); padding: 10px 14px;
+  }
+
+  /* ── Guide page ── */
+  .guide-wrap { max-width: 680px; }
+  .guide-wrap h2 { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
+  .guide-wrap > p { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.6; }
+  .step { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--blue-bg);
+    color: var(--blue-text); font-size: 13px; font-weight: 500; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  }
+  .step-body h3 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .step-body p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+  .code-block {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 1rem; font-family: var(--mono);
+    font-size: 12px; color: var(--text); white-space: pre; overflow-x: auto;
+    margin: 10px 0 1.5rem;
+  }
+  .template-label { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; margin-top: 1rem; }
+
+  /* ── Footer ── */
+  .site-footer {
+    text-align: center; padding: 2rem; font-size: 12px; color: var(--text3);
+    border-top: 0.5px solid var(--border); margin-top: 3rem;
+    background: var(--bg);
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <a class="site-title" href="#">Molecular Photophysics and Radical Spins</a>
+      <div class="site-subtitle"><a href="https://www.qiu-chem.com" style="color:inherit;text-decoration:none;">Qiu Lab · Utah State University</a></div>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" onclick="showPage('browse', this)">Browse</button>
+      <button class="nav-btn" onclick="showPage('submit', this)">Submit / Ask</button>
+      <button class="nav-btn" onclick="showPage('guide', this)">How to add</button>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ══ BROWSE PAGE ══ -->
+  <div class="page active" id="page-browse">
+    <div class="controls">
+      <input class="search-input" id="search" type="text" placeholder="Search name, abbreviation, or class…">
+      <div class="type-bar">
+        <button class="tab active" onclick="setType('all', this)">All</button>
+        <button class="tab" onclick="setType('chromophore', this)">Chromophores</button>
+        <button class="tab" onclick="setType('radical', this)">Radicals</button>
+        <button class="tab" onclick="setType('dyad', this)">Dyads</button>
+        <button class="tab" onclick="setType('triad', this)">Triads</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">Class:</span>
+      <button class="chip active" onclick="setCls('all', this)">All</button>
+      <button class="chip" onclick="setCls('perylene', this)">Perylene / acene</button>
+      <button class="chip" onclick="setCls('porphyrin', this)">Porphyrin</button>
+      <button class="chip" onclick="setCls('BODIPY', this)">BODIPY</button>
+      <button class="chip" onclick="setCls('nitroxide', this)">Nitroxide</button>
+      <button class="chip" onclick="setCls('carbon-centered', this)">Carbon-centered</button>
+    </div>
+    <p class="count-info" id="count-info"></p>
+    <div class="grid" id="grid"></div>
+    <div class="detail" id="detail"></div>
+  </div>
+
+  <!-- ══ SUBMIT PAGE ══ -->
+  <div class="page" id="page-submit">
+    <div class="form-wrap">
+      <h2>Submit a question or suggestion</h2>
+      <p>Ask about a specific compound, suggest a missing entry, report an error, or just leave feedback. Submissions go directly to the database curator.</p>
+      <div class="info-box">
+        Use this form to ask about a compound, suggest an addition, or report an error. Submissions go directly to the database curator at Qiu Lab.
+      </div>
+      <!-- Formspree form — submissions go to yunfan.qiu@usu.edu -->
+      <form id="contact-form" action="https://formspree.io/f/xwvaoanl" method="POST">
+        <div class="field">
+          <label>Your name</label>
+          <input type="text" name="name" placeholder="Jane Smith">
+        </div>
+        <div class="field">
+          <label>Your email (optional — for a reply)</label>
+          <input type="email" name="email" placeholder="jane@university.edu">
+        </div>
+        <div class="field">
+          <label>Topic</label>
+          <select name="topic">
+            <option>Question about a compound</option>
+            <option>Suggest a missing compound</option>
+            <option>Report incorrect data</option>
+            <option>General feedback</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Message</label>
+          <textarea name="message" placeholder="Describe your question or suggestion…"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Send message</button>
+      </form>
+      <div class="success-msg" id="success-msg">Message sent — thank you! We'll review it shortly.</div>
+    </div>
+  </div>
+
+  <!-- ══ GUIDE PAGE ══ -->
+  <div class="page" id="page-guide">
+    <div class="guide-wrap">
+      <h2>How to add new compounds</h2>
+      <p>You don't need to understand code to add entries. Just find the data section near the bottom of this file, copy a template, fill in your values, and save. That's it.</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Open index.html in a text editor</h3>
+          <p>On Mac: use TextEdit (switch to plain text mode first via Format → Make Plain Text). On Windows: use Notepad. Or use VS Code if you have it — it's free and highlights the code nicely.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Find the molecule data section</h3>
+          <p>Search for the text <code>const molecules = [</code> — that's where all compounds live. Each entry starts with <code>{id:</code> and ends with <code>},</code></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Copy the right template and fill it in</h3>
+          <p>Use the chromophore template for fluorophores/photosensitizers, the radical template for EPR-active species, or the dyad template for covalently linked systems.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Paste before the closing bracket and save</h3>
+          <p>Add your new entry right before the <code>];</code> line that closes the array. Make sure the previous entry ends with a comma. Save the file and re-upload it to GitHub.</p>
+        </div>
+      </div>
+
+      <div class="template-label">Chromophore template</div>
+      <div class="code-block">{
+  id: 9,                               // next integer — don't repeat any id
+  name: "Full IUPAC or common name",
+  abbr: "SHORT",                       // abbreviation shown on the card
+  type: "chromophore",                 // "chromophore" | "radical" | "both"
+  cls:  "porphyrin",                   // class chip: perylene | porphyrin | BODIPY | nitroxide | carbon-centered
+  props: {
+    "λ_abs":   "530 nm",
+    "λ_em":    "545 nm",
+    "ε":       "75,000 M⁻¹cm⁻¹",
+    "Φ_f":     "0.85",
+    "τ_S":     "4.2 ns",
+    "Solvent": "toluene"
+  },
+  desc: "2–3 sentences on photophysics and notable uses.",
+  refs: [
+    { text: "Author et al., Journal Year, Vol, Page", url: "https://doi.org/..." }
+  ]
+},</div>
+
+      <div class="template-label">Radical template</div>
+      <div class="code-block">{
+  id: 10,
+  name: "Full name",
+  abbr: "RAD",
+  type: "radical",
+  cls:  "nitroxide",
+  props: {
+    "g-factor":   "2.0059",
+    "a_N":        "45.2 MHz",
+    "Spin state": "S=1/2",
+    "t₁/₂":      "weeks (solid)",
+    "EPR lines":  "3"
+  },
+  desc: "EPR characteristics and applications.",
+  refs: [
+    { text: "Author et al., Journal Year", url: "https://doi.org/..." }
+  ]
+},</div>
+
+      <div class="template-label">Dyad template</div>
+      <div class="code-block">{
+  id: 11,
+  name: "Chromophore–radical dyad full name",
+  abbr: "DYD",
+  type: "dyad",                        // use "dyad" for two-component systems
+  cls:  "perylene",
+  props: {
+    "λ_abs":       "527 nm",
+    "RP lifetime": "~150 ns",
+    "J_ex":        "< 1 MHz",
+    "Spin state":  "doublet/triplet RP",
+    "Method":      "TR-EPR"
+  },
+  desc: "Description of spin polarization mechanism and QIS relevance.",
+  refs: [
+    { text: "Author et al., Journal Year", url: "https://doi.org/..." }
+  ]
+},</div>
+
+      <div class="template-label">Triad template</div>
+      <div class="code-block">{
+  id: 12,
+  name: "Donor–bridge–acceptor triad full name",
+  abbr: "TRIAD",
+  type: "triad",                       // use "triad" for three-component systems
+  cls:  "porphyrin",
+  props: {
+    "λ_abs":       "550 nm",
+    "CS lifetime": "~1 μs",
+    "J_ex":        "< 1 MHz",
+    "Spin state":  "quartet/doublet",
+    "Method":      "TR-EPR"
+  },
+  desc: "Description of charge-separated state, spin polarization, and application.",
+  refs: [
+    { text: "Author et al., Journal Year", url: "https://doi.org/..." }
+  ]
+},</div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  Molecular Photophysics and Radical Spins · Qiu Lab · Utah State University ·
+  <a href="mailto:yunfan.qiu@usu.edu">yunfan.qiu@usu.edu</a>
+</footer>
+
+<script>
+// ════════════════════════════════════════════════
+//  MOLECULE DATA — add new entries here
+//  Copy a template from the "How to add" tab
+// ════════════════════════════════════════════════
+const molecules = [
+  {
+    id: 1,
+    name: "Perylene-3,4:9,10-tetracarboxylic diimide",
+    abbr: "PDI",
+    type: "chromophore",
+    cls: "perylene",
+    props: { "λ_abs": "527 nm", "λ_em": "535 nm", "ε": "87,000 M⁻¹cm⁻¹", "Φ_f": "~1.0", "τ_S": "4 ns" },
+    desc: "Archetypal n-type organic semiconductor and antenna chromophore with near-unity fluorescence QY in dilute solution. Widely used in OPV, singlet fission, and spin-correlated radical pair research.",
+    refs: [{ text: "Würthner, Chem. Commun. 2004, 1564", url: "https://doi.org/10.1039/b312388g" }]
+  },
+  {
+    id: 2,
+    name: "Zinc tetraphenylporphyrin",
+    abbr: "ZnTPP",
+    type: "chromophore",
+    cls: "porphyrin",
+    props: { "λ_abs": "550 nm (Q)", "λ_em": "600 nm", "ε": "25,000 M⁻¹cm⁻¹", "τ_S": "1.8 ns", "T₁": "~50 μs" },
+    desc: "Benchmark metalloporphyrin photosensitizer. Zn heavy-atom effect promotes ISC to the triplet manifold. Key scaffold in artificial photosynthesis and spin-correlated radical pair studies.",
+    refs: [{ text: "Gouterman, J. Mol. Spectrosc. 1961, 6, 138", url: "https://doi.org/10.1016/0022-2852(61)90236-3" }]
+  },
+  {
+    id: 3,
+    name: "Boron-dipyrromethene",
+    abbr: "BODIPY",
+    type: "chromophore",
+    cls: "BODIPY",
+    props: { "λ_abs": "503 nm", "λ_em": "510 nm", "ε": "80,000 M⁻¹cm⁻¹", "Φ_f": "0.72", "τ_S": "5.7 ns" },
+    desc: "Highly tunable fluorophore with narrow absorption/emission bands. Photostable and easy to functionalize. Widely used in biological imaging and energy transfer dyads.",
+    refs: [{ text: "Loudet & Burgess, Chem. Rev. 2007, 107, 4891", url: "https://doi.org/10.1021/cr0500988" }]
+  },
+  {
+    id: 4,
+    name: "(2,2,6,6-Tetramethylpiperidin-1-yl)oxyl",
+    abbr: "TEMPO",
+    type: "radical",
+    cls: "nitroxide",
+    props: { "g-factor": "2.006", "a_N": "46.8 MHz", "Spin state": "S=1/2", "t₁/₂": "stable", "EPR lines": "3" },
+    desc: "Prototypical stable nitroxide radical. Three-line EPR spectrum from ¹⁴N hyperfine coupling. Widely used as spin label, oxidant, and EPR probe in DEER/PELDOR distance measurements.",
+    refs: [{ text: "Marsh, Appl. Magn. Reson. 2010, 37, 435", url: "https://doi.org/10.1007/s00723-009-0026-2" }]
+  },
+  {
+    id: 5,
+    name: "Finland trityl (TAM) radical",
+    abbr: "TAM",
+    type: "radical",
+    cls: "carbon-centered",
+    props: { "g-factor": "2.0036", "ΔH_pp": "< 50 mG", "Spin state": "S=1/2", "t₁/₂": "hours", "EPR lines": "1 (narrow)" },
+    desc: "Exceptionally narrow EPR linewidth carbon-centered radical used in dissolution DNP, in vivo oximetry, and as a polarizing agent for hyperpolarization experiments.",
+    refs: [{ text: "Ardenkjaer-Larsen et al., PNAS 2003, 100, 10158", url: "https://doi.org/10.1073/pnas.1733835100" }]
+  },
+  {
+    id: 6,
+    name: "PDI–TEMPO spin-correlated radical pair dyad",
+    abbr: "PDI–TEMPO",
+    type: "dyad",
+    cls: "perylene",
+    props: { "λ_abs": "527 nm", "RP lifetime": "~200 ns", "J_ex": "< 1 MHz", "Spin state": "doublet/triplet RP" },
+    desc: "Spin-correlated radical pair formed by photoinduced electron transfer from PDI. Generates non-equilibrium spin polarization observable by TR-EPR. Paradigm for organic spintronics and QIS.",
+    refs: [{ text: "Wasielewski, J. Org. Chem. 2006, 71, 5051", url: "https://doi.org/10.1021/jo060225d" }]
+  },
+  {
+    id: 7,
+    name: "Anthracene",
+    abbr: "An",
+    type: "chromophore",
+    cls: "perylene",
+    props: { "λ_abs": "380 nm", "λ_em": "402 nm", "ε": "9,000 M⁻¹cm⁻¹", "Φ_f": "0.27", "T₁": "13 μs" },
+    desc: "Classic acene photosensitizer and singlet fission benchmark. Triplet state accessible via ISC or sensitization. Core building block for tetracene and pentacene derivatives.",
+    refs: [{ text: "Swenberg & Stacy, Chem. Phys. Lett. 1968, 2, 327", url: "https://doi.org/10.1016/0009-2614(68)80001-8" }]
+  },
+  {
+    id: 8,
+    name: "(3-Carbamoyl-2,2,5,5-tetramethylpyrrolidin-1-yl)oxyl",
+    abbr: "CTPO",
+    type: "radical",
+    cls: "nitroxide",
+    props: { "g-factor": "2.0059", "a_N": "44.1 MHz", "Spin state": "S=1/2", "Solubility": "aqueous", "Use": "O₂ sensing" },
+    desc: "Water-soluble nitroxide spin probe sensitive to oxygen partial pressure. Used in EPR oximetry and as a photoredox co-catalyst in aqueous media.",
+    refs: [{ text: "Kutala et al., Magn. Reson. Med. 2004, 51, 1099", url: "https://doi.org/10.1002/mrm.20339" }]
+  },
+  {
+    id: 9,
+    name: "ZnP–PDI–TEMPO spin-polarized triad",
+    abbr: "ZnP–PDI–TEMPO",
+    type: "triad",
+    cls: "porphyrin",
+    props: { "λ_abs": "550 nm (ZnP)", "CS lifetime": "~1 μs", "J_ex": "< 0.5 MHz", "Spin state": "quartet/doublet", "Method": "TR-EPR" },
+    desc: "Three-component donor–bridge–acceptor triad generating a long-lived spin-polarized charge-separated state. ZnP acts as photosensitizer, PDI as secondary acceptor, TEMPO as stable radical. Relevant to quantum gate operations and spin-based solar energy conversion.",
+    refs: [{ text: "Wasielewski et al., JACS 2017, 139, 14185", url: "https://doi.org/10.1021/jacs.7b08598" }]
+  },
+  // ── ADD NEW ENTRIES ABOVE THIS LINE ──
+  // Copy a template from the "How to add" tab, paste it here, fill in the values.
+  // Remember to increment the id and add a comma after the closing } of the previous entry.
+];
+// ════════════════════════════════════════════════
+//  END OF MOLECULE DATA
+// ════════════════════════════════════════════════
+
+let activeType = 'all', activeCls = 'all';
+
+function showPage(p, btn) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function render() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = molecules.filter(m => {
+    const typeOk = activeType === 'all' || m.type === activeType;
+    const clsOk  = activeCls === 'all' || m.cls === activeCls;
+    const qOk    = !q || m.name.toLowerCase().includes(q) || m.abbr.toLowerCase().includes(q) || m.cls.toLowerCase().includes(q);
+    return typeOk && clsOk && qOk;
+  });
+  document.getElementById('count-info').textContent = `${filtered.length} compound${filtered.length !== 1 ? 's' : ''} shown`;
+  document.getElementById('grid').innerHTML = filtered.map(m => `
+    <div class="card" onclick="openDetail(${m.id})">
+      <div class="card-top">
+        <div>
+          <div class="card-abbr">${m.abbr}</div>
+          <div class="card-name">${m.name.length > 46 ? m.name.slice(0, 46) + '…' : m.name}</div>
+        </div>
+        <span class="badge ${m.type === 'chromophore' ? 'badge-c' : m.type === 'radical' ? 'badge-r' : m.type === 'dyad' ? 'badge-b' : 'badge-t'}">
+          ${m.type}
+        </span>
+      </div>
+      <div class="mol-box">structure · ${m.abbr}</div>
+      <div class="props">
+        ${Object.entries(m.props).slice(0, 4).map(([k, v]) => `<div class="prop"><b>${v}</b> <span>${k}</span></div>`).join('')}
+      </div>
+      <hr class="card-divider">
+      <div class="ref-small">${m.refs[0]?.text || ''}</div>
+    </div>`).join('');
+}
+
+function openDetail(id) {
+  const m = molecules.find(x => x.id === id);
+  const d = document.getElementById('detail');
+  d.className = 'detail open';
+  d.innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-name">${m.abbr}</div>
+        <div class="detail-full">${m.name}</div>
+      </div>
+      <button class="close-btn" onclick="document.getElementById('detail').className='detail'">✕</button>
+    </div>
+    <div class="detail-props">
+      ${Object.entries(m.props).map(([k, v]) => `
+        <div class="detail-prop">
+          <div class="detail-prop-key">${k}</div>
+          <div class="detail-prop-val">${v}</div>
+        </div>`).join('')}
+    </div>
+    <p class="detail-desc">${m.desc}</p>
+    <div class="refs-head">Primary references</div>
+    ${m.refs.map(r => `<div class="ref-item"><a href="${r.url}" target="_blank">${r.text}</a></div>`).join('')}`;
+  d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function setType(t, el) {
+  activeType = t;
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function setCls(c, el) {
+  activeCls = c;
+  document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+document.getElementById('search').addEventListener('input', render);
+
+document.getElementById('contact-form').addEventListener('submit', function() {
+  setTimeout(() => {
+    document.getElementById('success-msg').style.display = 'block';
+    this.reset();
+  }, 800);
+});
+
+render();
+</script>
+</body>
+</html>
